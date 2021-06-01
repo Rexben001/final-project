@@ -6,7 +6,7 @@ COPY client/package.json ./
 COPY client/package-lock.json ./
 
 RUN npm install
-RUN npm install react-scripts -g
+RUN npm install react-scripts@4.0.3 -g
 
 COPY client/ ./
 
