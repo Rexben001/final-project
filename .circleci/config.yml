@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  lint:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies and Lint app
+          command: |
+            make install
+            make lint
+  
+  build:
+    machine: true
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Build and push docker image to dockerhub
+          command: |
+            docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+            docker build -t rexben/react-app:${CIRCLE_WORKFLOW_ID:0:7} .
+            docker push rexben/react-app
+
+
+workflows:
+  deployment:
+    jobs:
+      - lint
+      - build
