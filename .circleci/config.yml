@@ -92,7 +92,7 @@ workflows:
             - create-deployment
           resource-name: deployment/react-app
       - test-cluster:
-          cluster-name: gsvcapstone
+          cluster-name: react-app
           requires:
             - aws-eks/update-container-image
       - aws-eks/delete-cluster:
