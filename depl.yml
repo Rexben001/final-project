@@ -26,31 +26,33 @@ spec:
       restartPolicy: Always
 
 ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: react-app
-#   labels:
-#     app: react-app
-# spec:
-#   type: LoadBalancer
-#   selector:
-#     app: react-app
-#   ports:
-#     - port: 80
-#       targetPort: 80
-#       protocol: TCP
-
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: react-app
+  labels:
+    app: react-app
 spec:
-  type: NodePort
+  type: LoadBalancer
+  selector:
+    app: react-app
   ports:
     - port: 80
       targetPort: 80
       protocol: TCP
-      nodePort: 31000
-  selector:
-    app: react-app
+
+## local dev
+
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: react-app
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 80
+#       targetPort: 80
+#       protocol: TCP
+#       nodePort: 31000
+#   selector:
+#     app: react-app

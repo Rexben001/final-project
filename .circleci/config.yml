@@ -95,7 +95,7 @@ workflows:
           cluster-name: react-app
           requires:
             - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: react-app
-          requires:
-            - test-cluster
+      # - aws-eks/delete-cluster:
+      #     cluster-name: react-app
+      #     requires:
+      #       - test-cluster
