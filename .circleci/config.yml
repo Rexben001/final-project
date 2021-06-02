@@ -57,7 +57,7 @@ jobs:
 
 
 workflows:
-  default:
+  deployment:
     jobs:
       - lint
       - build:
