@@ -1,5 +1,9 @@
 version: 2.1
 
+orbs:
+  aws-eks: circleci/aws-eks@1.1.0
+  kubernetes: circleci/kubernetes@0.4.0
+
 jobs:
   lint:
     docker:
@@ -24,9 +28,64 @@ jobs:
             docker build -t rexben/react-app:${CIRCLE_WORKFLOW_ID:0:7} .
             docker push rexben/react-app
 
+  test-cluster:
+    executor: aws-eks/python3
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: react-app
+      - run:
+          command: |
+            kubectl get services
+            kubectl get nodes
+            kubectl get deployment
+            echo parameters.cluster-name
+          name: Test cluster
+
+  create-deployment:
+    executor: aws-eks/python3
+    steps:
+      - checkout
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: react-app
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: depl.yml
+          resource-name: deployment/react-app
+
 
 workflows:
-  deployment:
+  default:
     jobs:
       - lint
-      - build
+      - build:
+          requires:
+            - lint
+      - aws-eks/create-cluster:
+          cluster-name: react-app
+      - create-deployment:
+          cluster-name: react-app
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: react-app
+          container-image-updates: 'react-app=rexben/react-app'
+          post-steps:
+            - kubernetes/delete-resource:
+                resource-names: react-app
+                resource-types: deployment
+                wait: true
+          record: true
+          requires:
+            - create-deployment
+          resource-name: deployment/react-app
+      - test-cluster:
+          cluster-name: gsvcapstone
+          requires:
+            - aws-eks/update-container-image
+      - aws-eks/delete-cluster:
+          cluster-name: react-app
+          requires:
+            - test-cluster
