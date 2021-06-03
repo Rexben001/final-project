@@ -1,3 +1,3 @@
-docker build -t react-app .
+docker build -t flask-app .
 
-docker run -p 3000:3000 react-app
+docker run -p 8080:80 flask-app

@@ -1,8 +1,8 @@
-dockerpath=rexben/react-app
+dockerpath=rexben/flask-app
 
 echo "Docker ID and Image: $dockerpath"
 docker login --username=rexben
-docker tag react-app $dockerpath
+docker tag flask-app $dockerpath
 
 
 docker push $dockerpath
