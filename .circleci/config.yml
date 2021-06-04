@@ -29,15 +29,15 @@ jobs:
           name: Build and push docker image to dockerhub
           command: |
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-            docker build -t rexben/flash-project .
-            docker push rexben/flash-project:latest
+            docker build -t rexben/flash-capstone .
+            docker push rexben/flash-capstone:latest
 
   test-cluster:
     executor: aws-eks/python3
     parameters:
       cluster-name:
         description: |
-          flash-project
+          flash-capstone
         type: string
     steps:
       - kubernetes/install
@@ -56,7 +56,7 @@ jobs:
     parameters:
       cluster-name:
         description: |
-          flash-project
+          flash-capstone
         type: string
     steps:
       - checkout
@@ -67,7 +67,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: depl.yml
-          resource-name: deployment/flash-project
+          resource-name: deployment/flash-capstone
 
 
 workflows:
@@ -78,28 +78,28 @@ workflows:
           requires:
             - lint
       - aws-eks/create-cluster:
-          cluster-name: flash-projects
+          cluster-name: flash-capstone
       - create-deployment:
-          cluster-name: flash-projects
+          cluster-name: flash-capstone
           requires:
             - aws-eks/create-cluster
       - aws-eks/update-container-image:
-          cluster-name: flash-projects
-          container-image-updates: 'flash-project=rexben/flash-project'
+          cluster-name: flash-capstone
+          container-image-updates: 'flash-capstone=rexben/flash-capstone'
           post-steps:
             - kubernetes/delete-resource:
-                resource-names: flash-projects
+                resource-names: flash-capstone
                 resource-types: deployment
                 wait: true
           record: true
           requires:
             - create-deployment
-          resource-name: deployment/flash-projects
+          resource-name: deployment/flash-capstone
       - test-cluster:
-          cluster-name: flash-projects
+          cluster-name: flash-capstone
           requires:
             - aws-eks/update-container-image
       - aws-eks/delete-cluster:
-          cluster-name: flash-projects
+          cluster-name: flash-capstone
           requires:
             - test-cluster

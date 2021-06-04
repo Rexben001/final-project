@@ -1,3 +1,3 @@
-docker build -t flash-project .
+docker build -t flash-capstone .
 
-docker run -p 8080:80 flash-project
+docker run -p 8080:80 flash-capstone

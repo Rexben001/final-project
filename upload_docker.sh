@@ -1,8 +1,8 @@
-dockerpath=rexben/flash-project
+dockerpath=rexben/flash-capstone
 
 echo "Docker ID and Image: $dockerpath"
 docker login --username=rexben
-docker tag flash-project $dockerpath
+docker tag flash-capstone $dockerpath
 
 
 docker push $dockerpath
