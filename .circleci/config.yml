@@ -14,9 +14,9 @@ jobs:
           name: Install dependencies and Lint app
           command: |
             sudo apt-get update
-            sudo apt-get install python3-venv
-            python3 -m venv virtualenv
-            . virtualenv/bin/activate
+            # sudo apt-get install python3-venv
+            # python3 -m venv virtualenv
+            # . virtualenv/bin/activate
             make install
             make lint
   
@@ -73,33 +73,33 @@ jobs:
 workflows:
   deployment:
     jobs:
-      # - lint
-      # - build:
-      #     requires:
-      #       - lint
-      # - aws-eks/create-cluster:
+      - lint
+      - build:
+          requires:
+            - lint
+      - aws-eks/create-cluster:
+          cluster-name: flash-main
+      - create-deployment:
+          cluster-name: flash-main
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: flash-main
+          container-image-updates: 'flash-main=rexben/flash-main'
+          post-steps:
+            - kubernetes/delete-resource:
+                resource-names: flash-main
+                resource-types: deployment
+                wait: true
+          record: true
+          requires:
+            - create-deployment
+          resource-name: deployment/flash-main
+      - test-cluster:
+          cluster-name: flash-main
+          requires:
+            - aws-eks/update-container-image
+      # - aws-eks/delete-cluster:
       #     cluster-name: flash-main
-      # - create-deployment:
-      #     cluster-name: flash-main
       #     requires:
-      #       - aws-eks/create-cluster
-      # - aws-eks/update-container-image:
-      #     cluster-name: flash-main
-      #     container-image-updates: 'flash-main=rexben/flash-main'
-      #     post-steps:
-      #       - kubernetes/delete-resource:
-      #           resource-names: flash-main
-      #           resource-types: deployment
-      #           wait: true
-      #     record: true
-      #     requires:
-      #       - create-deployment
-      #     resource-name: deployment/flash-main
-      # - test-cluster:
-      #     cluster-name: flash-main
-      #     requires:
-      #       - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: flash-app
-          # requires:
-          #   - test-cluster
+      #       - test-cluster
