@@ -73,33 +73,33 @@ jobs:
 workflows:
   deployment:
     jobs:
-      # - lint
-      # - build:
-      #     requires:
-      #       - lint
-      # - aws-eks/create-cluster:
-      #     cluster-name: flash-project
-      # - create-deployment:
-      #     cluster-name: flash-project
-      #     requires:
-      #       - aws-eks/create-cluster
-      # - aws-eks/update-container-image:
-      #     cluster-name: flash-project
-      #     container-image-updates: 'flash-project=rexben/flash-project'
-      #     post-steps:
-      #       - kubernetes/delete-resource:
-      #           resource-names: flash-project
-      #           resource-types: deployment
-      #           wait: true
-      #     record: true
-      #     requires:
-      #       - create-deployment
-      #     resource-name: deployment/flash-project
-      # - test-cluster:
-      #     cluster-name: flash-project
-      #     requires:
-      #       - aws-eks/update-container-image
+      - lint
+      - build:
+          requires:
+            - lint
+      - aws-eks/create-cluster:
+          cluster-name: flash-project
+      - create-deployment:
+          cluster-name: flash-project
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: flash-project
+          container-image-updates: 'flash-project=rexben/flash-project'
+          post-steps:
+            - kubernetes/delete-resource:
+                resource-names: flash-project
+                resource-types: deployment
+                wait: true
+          record: true
+          requires:
+            - create-deployment
+          resource-name: deployment/flash-project
+      - test-cluster:
+          cluster-name: flash-project
+          requires:
+            - aws-eks/update-container-image
       - aws-eks/delete-cluster:
           cluster-name: flash-project
-          # requires:
-          #   - test-cluster
+          requires:
+            - test-cluster
