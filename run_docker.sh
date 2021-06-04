@@ -1,3 +1,3 @@
-docker build -t flash-main .
+docker build -t flash-test .
 
-docker run -p 8080:80 flash-main
+docker run -p 8080:80 flash-test

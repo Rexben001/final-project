@@ -29,15 +29,15 @@ jobs:
           name: Build and push docker image to dockerhub
           command: |
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-            docker build -t rexben/flash-main:${CIRCLE_WORKFLOW_ID:0:7} .
-            docker push rexben/flash-main
+            docker build -t rexben/flash-test:${CIRCLE_WORKFLOW_ID:0:7} .
+            docker push rexben/flash-test
 
   test-cluster:
     executor: aws-eks/python3
     parameters:
       cluster-name:
         description: |
-          flash-main
+          flash-test
         type: string
     steps:
       - kubernetes/install
@@ -56,7 +56,7 @@ jobs:
     parameters:
       cluster-name:
         description: |
-          flash-main
+          flash-test
         type: string
     steps:
       - checkout
@@ -67,7 +67,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: depl.yml
-          resource-name: deployment/flash-main
+          resource-name: deployment/flash-test
 
 
 workflows:
@@ -78,28 +78,28 @@ workflows:
           requires:
             - lint
       - aws-eks/create-cluster:
-          cluster-name: flash-main
+          cluster-name: flash-test
       - create-deployment:
-          cluster-name: flash-main
+          cluster-name: flash-test
           requires:
             - aws-eks/create-cluster
       - aws-eks/update-container-image:
-          cluster-name: flash-main
-          container-image-updates: 'flash-main=rexben/flash-main'
+          cluster-name: flash-test
+          container-image-updates: 'flash-test=rexben/flash-test'
           post-steps:
             - kubernetes/delete-resource:
-                resource-names: flash-main
+                resource-names: flash-test
                 resource-types: deployment
                 wait: true
           record: true
           requires:
             - create-deployment
-          resource-name: deployment/flash-main
+          resource-name: deployment/flash-test
       - test-cluster:
-          cluster-name: flash-main
+          cluster-name: flash-test
           requires:
             - aws-eks/update-container-image
       # - aws-eks/delete-cluster:
-      #     cluster-name: flash-main
+      #     cluster-name: flash-test
       #     requires:
       #       - test-cluster
