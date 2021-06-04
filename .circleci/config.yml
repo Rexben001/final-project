@@ -100,6 +100,6 @@ workflows:
       #     requires:
       #       - aws-eks/update-container-image
       - aws-eks/delete-cluster:
-          cluster-name: flash-main
+          cluster-name: flash-app
           # requires:
           #   - test-cluster
