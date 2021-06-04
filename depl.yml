@@ -1,12 +1,12 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: flash-test
+  name: flash-project
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: flash-test
+      app: flash-project
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -15,11 +15,11 @@ spec:
   template:
     metadata:
       labels:
-        app: flash-test
+        app: flash-project
     spec:
       containers:
-        - name: flash-test
-          image: rexben/flash-test
+        - name: flash-project
+          image: rexben/flash-project
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -29,13 +29,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flash-test
+  name: flash-project
   labels:
-    app: flash-test
+    app: flash-project
 spec:
   type: LoadBalancer
   selector:
-    app: flash-test
+    app: flash-project
   ports:
     - port: 80
       targetPort: 80
@@ -46,7 +46,7 @@ spec:
 # kind: Service
 # apiVersion: v1
 # metadata:
-#   name: flash-test
+#   name: flash-project
 # spec:
 #   type: NodePort
 #   ports:
@@ -55,4 +55,4 @@ spec:
 #       protocol: TCP
 #       nodePort: 31000
 #   selector:
-#     app: flash-test
+#     app: flash-project
