@@ -1,3 +1,3 @@
-docker build -t flask-app .
+docker build -t flash-main .
 
-docker run -p 8080:80 flask-app
+docker run -p 8080:80 flash-main
